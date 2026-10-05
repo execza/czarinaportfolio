@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Czarina — Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandOrange: '#ff5732',
+                        brandPurple: '#d1b8fb',
+                        brandDark: '#121216',
+                        brandBg: '#fcfcfd',
+                    },
+                    fontFamily: {
+                        logo: ['Outfit', 'sans-serif'],
+                        heading: ['Syne', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fcfcfd;
+            color: #121216;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .font-heading { font-family: 'Syne', sans-serif; }
+        .font-logo { font-family: 'Outfit', sans-serif; }
+
+        .glass-nav {
+            background: rgba(252, 252, 253, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ff5732 0%, #d1b8fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .roulette-viewport {
+            display: inline-block;
+            height: 1.2em;
+            overflow: hidden;
+            vertical-align: bottom;
+            position: relative;
+        }
+        .roulette-list {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .roulette-item {
+            height: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .text-gradient-rev {
+            background: linear-gradient(90deg, #c4a0fa 0%, #e58ab0 40%, #ff5732 75%, #ff5732 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .service-item .svc-title { transition: color .3s ease, padding-left .3s ease; }
+        .service-item:hover .svc-title, .service-item.open .svc-title { color: #121216; }
+        .service-item:hover .svc-num, .service-item.open .svc-num { border-color: #121216; color: #121216; }
+        .service-item .svc-plus { transition: transform .3s ease, background .3s ease, color .3s ease; }
+        .service-item.open .svc-plus { transform: rotate(45deg); background: #ff5732; color: #fff; border-color: #ff5732; }
+        .service-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+        .service-item.open .service-body { grid-template-rows: 1fr; }
+
+        .phone{position:relative;aspect-ratio:9/19;background:#121216;border-radius:2.2rem;padding:.5rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.35)}
+        .phone::before{content:'';position:absolute;top:.8rem;left:50%;transform:translateX(-50%);width:28%;height:.8rem;background:#121216;border-radius:9999px;z-index:2}
+        .phone img,.phone video{width:100%;height:100%;object-fit:cover;border-radius:1.7rem;display:block;background:#f2effa}
+        .vthumb.active{border-color:#ff5732}
+        .laptop-screen{border:.5rem solid #121216;border-bottom-width:.8rem;border-radius:1rem 1rem 0 0;overflow:hidden;aspect-ratio:16/10;background:#fff}
+        .laptop-screen img,.tv img,.poster img{width:100%;height:100%;object-fit:cover;display:block}
+        .laptop-base{height:.7rem;background:linear-gradient(#dcdce1,#b8b8c0);border-radius:0 0 1rem 1rem;width:112%;margin-left:-6%}
+        .tv{border:.5rem solid #121216;border-radius:1rem;aspect-ratio:16/9;overflow:hidden;box-shadow:0 20px 40px -12px rgba(0,0,0,.3)}
+        .poster{aspect-ratio:3/4;border-radius:.75rem;overflow:hidden;box-shadow:0 15px 30px -10px rgba(0,0,0,.35);background:#f2effa}
+        .tilt{transition:transform .35s ease}
+        .tilt:hover{transform:translateY(-8px) rotate(-2deg)}
+        .float{animation:floaty 5s ease-in-out infinite}
+        @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -12px}}
+        .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+        .reveal.in{opacity:1;transform:none}
+        .ptab{font-size:.8rem;font-weight:600;padding:.55rem 1.1rem;border-radius:9999px;border:1px solid #e5e5ea;color:#121216;transition:all .25s}
+        .ptab:hover{border-color:#121216}
+        .ptab.active{background:#121216;color:#fff;border-color:#121216}
+        .pblock img{cursor:zoom-in}
+
+        /* Certification pill (outlined pill + white circle, like the reference) */
+        .cert-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            border-radius: 9999px;
+            padding: 0.3rem 0.35rem 0.3rem 0.95rem;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+        .cert-pill.icon-left { padding: 0.3rem 0.95rem 0.3rem 0.35rem; }
+        .cert-pill .cert-dot {
+            width: 1.4rem;
+            height: 1.4rem;
+            border-radius: 9999px;
+            background: #fff;
+            color: #121216;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            flex-shrink: 0;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+        .cert-pill:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+        .cert-pill:hover .cert-dot { background: #ff5732; color: #fff; transform: rotate(90deg); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- NAVBAR -->
+    <header id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 py-4 sm:py-5">
+        <div class="max-w-6xl mx-auto px-6 sm:px-10 flex items-center justify-between">
+            <a href="#home" class="flex items-center gap-2 group">
+                <img src="logo.png" alt="czarina." class="h-7 sm:h-9 w-auto object-contain" 
+                     onerror="this.onerror=null; this.style.display='none'; document.getElementById('fallback-logo').classList.remove('hidden');">
+                <span id="fallback-logo" class="hidden font-logo font-bold text-2xl sm:text-3xl tracking-tight text-brandDark group-hover:opacity-80 transition-opacity">
+                    czarina<span class="text-brandOrange">.</span>
+                </span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-10">
+                <a href="#home" class="text-sm font-semibold text-brandDark hover:text-brandOrange transition-colors">Home</a>
+                <a href="#about" class="text-sm font-medium text-brandDark/70 hover:text-brandOrange transition-colors">About</a>
+                <a href="#services" class="text-sm font-medium text-brandDark/70 hover:text-brandOrange transition-colors">Services</a>
+                <a href="#portfolio" class="text-sm font-medium text-brandDark/70 hover:text-brandOrange transition-colors">Portfolio</a>
+            </nav>
+
+            <div class="hidden md:block">
+                <a href="#contact" class="inline-flex items-center justify-center bg-[#d1b8fb] text-brandDark font-semibold text-sm px-7 py-3 rounded-full hover:shadow-lg hover:shadow-[#d1b8fb]/40 hover:opacity-95 transition-all duration-300 transform active:scale-95">
+                    Contact Me
+                </a>
+            </div>
+
+            <button id="menu-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 focus:outline-none z-50 space-y-1.5" aria-label="Toggle navigation">
+                <span class="w-6 h-0.5 bg-brandDark transition-all duration-300"></span>
+                <span class="w-6 h-0.5 bg-brandDark transition-all duration-300"></span>
+                <span class="w-4 h-0.5 bg-brandDark transition-all duration-300 self-end"></span>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="fixed inset-0 bg-brandBg/98 backdrop-blur-2xl z-40 flex flex-col justify-center items-center space-y-8 opacity-0 pointer-events-none transition-all duration-300 md:hidden">
+            <a href="#home" class="mobile-nav-link text-2xl font-heading font-semibold text-brandDark hover:text-brandOrange">Home</a>
+            <a href="#about" class="mobile-nav-link text-2xl font-heading font-semibold text-brandDark hover:text-brandOrange">About</a>
+            <a href="#services" class="mobile-nav-link text-2xl font-heading font-semibold text-brandDark hover:text-brandOrange">Services</a>
+            <a href="#portfolio" class="mobile-nav-link text-2xl font-heading font-semibold text-brandDark hover:text-brandOrange">Portfolio</a>
+            <a href="#contact" class="mobile-nav-link inline-flex items-center gap-2 bg-[#d1b8fb] text-brandDark font-semibold text-lg px-9 py-3.5 rounded-full shadow-md mt-4">
+                <span>Contact Me</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="pt-24 sm:pt-28 pb-0 flex flex-col justify-start items-center relative">
+        <div class="max-w-5xl mx-auto px-6 text-center flex flex-col items-center w-full">
+            <p class="text-xs sm:text-sm font-semibold uppercase tracking-widest text-brandDark/50 mb-1">
+                — Hello
+            </p>
+
+            <h1 class="text-5xl sm:text-7xl md:text-8xl font-heading font-bold text-brandDark tracking-tight leading-none mb-1 sm:mb-1.5">
+                I'm <span class="text-gradient">Czarina</span>,
+            </h1>
+
+            <!-- Animated Slot Roulette Text (6 roles) -->
+            <div class="text-2xl sm:text-4xl md:text-5xl font-heading font-semibold text-brandDark tracking-tight mb-2 sm:mb-3 h-10 sm:h-12 flex items-center justify-center">
+                <span class="roulette-viewport">
+                    <span id="roulette-list" class="roulette-list">
+                        <span class="roulette-item">Virtual Assistant</span>
+                        <span class="roulette-item">Social Media</span>
+                        <span class="roulette-item">Graphic Designer</span>
+                        <span class="roulette-item">Video Editor</span>
+                        <span class="roulette-item">Email Marketing</span>
+                        <span class="roulette-item">Admin Support</span>
+                    </span>
+                </span>
+            </div>
+
+            <div class="relative w-full max-w-md sm:max-w-xl md:max-w-2xl my-0 flex justify-center items-center">
+                <div class="relative z-10 w-full max-w-[280px] sm:max-w-[360px] md:max-w-[420px]">
+                    <img src="header.png" alt="Czarina" class="w-full h-auto object-contain block mx-auto" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/560x680/f2effa/121216?text=header.png';">
+                </div>
+
+                <div class="absolute bottom-4 sm:bottom-6 z-30 flex items-center gap-2.5 bg-white/95 backdrop-blur-md p-2 sm:p-2.5 rounded-full shadow-2xl border border-gray-100">
+                    <a href="#portfolio" class="bg-brandOrange text-white text-xs sm:text-sm font-semibold px-6 sm:px-7 py-3 rounded-full flex items-center gap-2 hover:bg-opacity-95 hover:shadow-lg transition-all active:scale-95">
+                        <span>Portfolio</span>
+                        <span class="w-5 h-5 rounded-full bg-white/25 flex items-center justify-center text-[10px]">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </a>
+                    <a href="#contact" class="bg-white text-brandDark border border-gray-200 text-xs sm:text-sm font-semibold px-6 sm:px-7 py-3 rounded-full hover:bg-gray-50 transition-all active:scale-95">
+                        Hire Me
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT ME SECTION (pulled closer to hero: -mt + smaller top padding) -->
+    <section id="about" class="pt-12 sm:pt-16 pb-12 sm:pb-16 bg-[#f8f7fc] relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem]">
+        <div class="max-w-6xl mx-auto px-6 sm:px-10">
+
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+                <div>
+                    <span class="inline-block bg-white text-brandDark text-xs font-semibold px-4 py-1.5 rounded-full border border-gray-200 shadow-sm mb-4">
+                        01 / ABOUT ME
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-heading font-medium text-brandDark tracking-tight max-w-2xl leading-tight">
+                        Create with purpose. Work with <span class="text-gradient font-bold">intention.</span>
+                    </h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-white px-5 py-3 rounded-2xl border border-gray-200/80 shadow-sm flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-xs font-semibold text-brandDark">Available Part-Time</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+
+                <!-- Tile 1 -->
+                <div class="md:col-span-4 bg-brandOrange text-white p-7 sm:p-8 rounded-3xl flex flex-col justify-between min-h-[220px] shadow-lg shadow-brandOrange/20 hover:scale-[1.02] transition-transform duration-300">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">Creative Mind</span>
+                        <i class="fa-solid fa-wand-magic-sparkles text-2xl text-white/80"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-heading font-bold mb-1">Visual First</h3>
+                        <p class="text-white/90 text-xs leading-relaxed">Designing scroll-stopping content that captures immediate attention.</p>
+                    </div>
+                </div>
+
+                <!-- Tile 2: bigger quote icon -->
+                <div class="md:col-span-5 bg-brandPurple text-brandDark p-7 sm:p-8 rounded-3xl flex flex-col justify-between min-h-[220px] shadow-sm hover:scale-[1.02] transition-transform duration-300">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold uppercase tracking-wider bg-white/40 px-3 py-1 rounded-full">Work Style</span>
+                        <i class="fa-solid fa-quote-right text-4xl sm:text-5xl text-brandDark/30"></i>
+                    </div>
+                    <div>
+                        <p class="text-base sm:text-lg font-heading font-semibold text-brandDark mb-2 leading-snug">
+                            "Ready to support your business so you can focus on bigger things."
+                        </p>
+                        <span class="text-xs font-medium text-brandDark/70">— Czarina</span>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Certifications as clickable pills -->
+                <div class="md:col-span-3 bg-brandDark text-white p-7 sm:p-8 rounded-3xl flex flex-col justify-between min-h-[220px] shadow-md hover:scale-[1.02] transition-transform duration-300">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-brandOrange bg-brandOrange/15 px-3 py-1 rounded-full">Certifications</span>
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#ff5732" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><circle cx="12" cy="9" r="2.5"/><path d="M8.5 14l-2 8 5.5-3 5.5 3-2-8"/></svg>
+                    </div>
+                    <div class="flex flex-col gap-2.5 items-start">
+                        <a href="https://app-na2.hubspot.com/academy/achievements/m7qrbgld/en/1/czarina-gabrielle-gerong/social-media-certified" target="_blank" rel="noopener noreferrer" title="Social Media Certified" class="cert-pill">
+                            <span>Social Media Certified</span>
+                            <span class="cert-dot"><i class="fa-solid fa-plus"></i></span>
+                        </a>
+                        <a href="https://app-na2.hubspot.com/academy/achievements/nvz61qyw/en/1/czarina-gabrielle-gerong/social-media-marketing-ii-certified" target="_blank" rel="noopener noreferrer" title="Social Media Marketing II Certified" class="cert-pill icon-left self-end">
+                            <span class="cert-dot"><i class="fa-solid fa-plus"></i></span>
+                            <span>Social Media Marketing II</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="md:col-span-12 bg-white p-8 sm:p-10 rounded-3xl border border-gray-200/80 shadow-sm flex flex-col md:flex-row items-center md:justify-start gap-8 md:gap-12">
+                    <div class="max-w-2xl">
+                        <h3 class="text-xl sm:text-2xl font-heading font-bold text-brandDark mb-3">
+                            Creative Design, Content & Digital Solutions
+                        </h3>
+                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
+                            Driven by passion and a sharp creative mind, I specialize in digital content creation across graphic design, video editing, email design, and social media management. I work across tools like Canva, CapCut, Mailchimp, and Google Workspace to create consistent, high-impact visuals and efficient workflows that move your projects forward.
+                        </p>
+                    </div>
+                    <img src="eye.png" alt="Eye" class="shrink-0 w-44 h-44 sm:w-56 sm:h-56 rounded-full object-cover bg-[#f2effa] border border-gray-200"
+                         onerror="this.onerror=null; this.src='https://placehold.co/300x300/f2effa/121216?text=eye.png';">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services" class="py-12 sm:py-16 bg-[#fcfcfd]">
+        <div class="max-w-6xl mx-auto px-6 sm:px-10">
+            <div class="text-center">
+            <span class="inline-block bg-white text-brandDark text-xs font-semibold px-4 py-1.5 rounded-full border border-gray-200 shadow-sm mb-4">
+                02 / SERVICES
+            </span>
+            <br><h2 class="inline-block font-heading font-bold text-3xl sm:text-5xl tracking-tight leading-tight text-gradient-rev pb-1 mb-6 sm:mb-8">Expertise &amp; Skills</h2>
+            </div>
+
+            <div id="services-list" class="border-t border-gray-200">
+                <div class="service-item border-b border-gray-200">
+                    <button type="button" class="service-head w-full flex items-center justify-between gap-4 py-4 sm:py-5 text-left" aria-expanded="false">
+                        <span class="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <span class="svc-num shrink-0 w-10 text-center text-[10px] font-semibold border border-gray-400 text-gray-500 rounded-full px-2.5 py-0.5 transition-colors">01/</span>
+                            <span class="svc-title font-heading font-semibold text-xl sm:text-3xl tracking-tight text-gray-300 truncate">Social Media Managing</span>
+                        </span>
+                        <span class="flex items-center gap-4 shrink-0">
+                            <span class="hidden sm:block text-xs text-gray-400 font-medium">Meta Business Suite</span>
+                            <span class="svc-plus w-7 h-7 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-plus"></i></span>
+                        </span>
+                    </button>
+                    <div class="service-body">
+                        <div class="overflow-hidden">
+                            <p class="pb-5 sm:pb-6 max-w-2xl text-sm sm:text-base text-gray-600 leading-relaxed">I use Meta Business Suite to plan, schedule, and publish posts so your content goes out consistently and on time. I can also pick up other scheduling tools quickly, depending on what you prefer.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item border-b border-gray-200">
+                    <button type="button" class="service-head w-full flex items-center justify-between gap-4 py-4 sm:py-5 text-left" aria-expanded="false">
+                        <span class="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <span class="svc-num shrink-0 w-10 text-center text-[10px] font-semibold border border-gray-400 text-gray-500 rounded-full px-2.5 py-0.5 transition-colors">02/</span>
+                            <span class="svc-title font-heading font-semibold text-xl sm:text-3xl tracking-tight text-gray-300 truncate">Graphic Designing</span>
+                        </span>
+                        <span class="flex items-center gap-4 shrink-0">
+                            <span class="hidden sm:block text-xs text-gray-400 font-medium">Canva</span>
+                            <span class="svc-plus w-7 h-7 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-plus"></i></span>
+                        </span>
+                    </button>
+                    <div class="service-body">
+                        <div class="overflow-hidden">
+                            <p class="pb-5 sm:pb-6 max-w-2xl text-sm sm:text-base text-gray-600 leading-relaxed">I handle basic editing on Canva to create clean, eye-catching social posts, graphics, and other marketing materials. I can customize templates or design from scratch, depending on your style and preferences.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item border-b border-gray-200">
+                    <button type="button" class="service-head w-full flex items-center justify-between gap-4 py-4 sm:py-5 text-left" aria-expanded="false">
+                        <span class="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <span class="svc-num shrink-0 w-10 text-center text-[10px] font-semibold border border-gray-400 text-gray-500 rounded-full px-2.5 py-0.5 transition-colors">03/</span>
+                            <span class="svc-title font-heading font-semibold text-xl sm:text-3xl tracking-tight text-gray-300 truncate">Video Editing</span>
+                        </span>
+                        <span class="flex items-center gap-4 shrink-0">
+                            <span class="hidden sm:block text-xs text-gray-400 font-medium">CapCut</span>
+                            <span class="svc-plus w-7 h-7 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-plus"></i></span>
+                        </span>
+                    </button>
+                    <div class="service-body">
+                        <div class="overflow-hidden">
+                            <p class="pb-5 sm:pb-6 max-w-2xl text-sm sm:text-base text-gray-600 leading-relaxed">I edit videos in CapCut using solid basic editing skills, from short-form reels to long-form videos, with clean cuts, captions, and smooth pacing.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item border-b border-gray-200">
+                    <button type="button" class="service-head w-full flex items-center justify-between gap-4 py-4 sm:py-5 text-left" aria-expanded="false">
+                        <span class="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <span class="svc-num shrink-0 w-10 text-center text-[10px] font-semibold border border-gray-400 text-gray-500 rounded-full px-2.5 py-0.5 transition-colors">04/</span>
+                            <span class="svc-title font-heading font-semibold text-xl sm:text-3xl tracking-tight text-gray-300 truncate">Email Marketing</span>
+                        </span>
+                        <span class="flex items-center gap-4 shrink-0">
+                            <span class="hidden sm:block text-xs text-gray-400 font-medium">Mailchimp</span>
+                            <span class="svc-plus w-7 h-7 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-plus"></i></span>
+                        </span>
+                    </button>
+                    <div class="service-body">
+                        <div class="overflow-hidden">
+                            <p class="pb-5 sm:pb-6 max-w-2xl text-sm sm:text-base text-gray-600 leading-relaxed">I use Mailchimp to design and send email campaigns, organize subscriber lists, and set up automated emails that keep your audience engaged without the manual work.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-item border-b border-gray-200">
+                    <button type="button" class="service-head w-full flex items-center justify-between gap-4 py-4 sm:py-5 text-left" aria-expanded="false">
+                        <span class="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <span class="svc-num shrink-0 w-10 text-center text-[10px] font-semibold border border-gray-400 text-gray-500 rounded-full px-2.5 py-0.5 transition-colors">05/</span>
+                            <span class="svc-title font-heading font-semibold text-xl sm:text-3xl tracking-tight text-gray-300 truncate">Admin Support</span>
+                        </span>
+                        <span class="flex items-center gap-4 shrink-0">
+                            <span class="hidden sm:block text-xs text-gray-400 font-medium">Google Workspace</span>
+                            <span class="svc-plus w-7 h-7 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-[10px]"><i class="fa-solid fa-plus"></i></span>
+                        </span>
+                    </button>
+                    <div class="service-body">
+                        <div class="overflow-hidden">
+                            <p class="pb-5 sm:pb-6 max-w-2xl text-sm sm:text-base text-gray-600 leading-relaxed">I mainly work in Google Workspace and can adapt to other tools depending on your needs. I use Google Sheets for content calendars and trackers, and Google Docs for guides and other materials, to keep your workflow organized.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTFOLIO SECTION -->
+    <section id="portfolio" class="py-12 sm:py-16 bg-white border-t border-gray-100">
+        <div class="max-w-6xl mx-auto px-6 sm:px-10">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <span class="inline-block bg-[#f8f7fc] text-brandDark text-xs font-semibold px-4 py-1.5 rounded-full border border-gray-200 shadow-sm mb-4">03 / PORTFOLIO</span>
+                <h2 class="block w-fit mx-auto text-3xl sm:text-5xl font-heading font-bold tracking-tight text-gradient-rev pb-1">Selected Work</h2>
+                <p class="text-sm text-gray-500 mt-2">Graphics, reels, emails, branding and more. Tap any image to view it larger.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 mb-12"><button class="ptab active" data-filter="all">All</button><button class="ptab " data-filter="social">Social Media</button><button class="ptab " data-filter="church">Church Media</button><button class="ptab " data-filter="email">Email</button><button class="ptab " data-filter="branding">Branding</button><button class="ptab " data-filter="video">Video</button><button class="ptab " data-filter="passion">Passion Projects</button><button class="ptab " data-filter="admin">Admin Support</button></div>
+
+            <div class="pblock mb-10 sm:mb-16" data-cat="social"><div class="bg-[#f8f7fc] rounded-[2rem] p-6 sm:p-10 grid md:grid-cols-2 gap-8 items-center">
+<div class="reveal"><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full">Featured · Social Media</span><h3 class="font-heading font-bold text-2xl sm:text-3xl mt-3 mb-2">Salon Suite Rental — Social Posts & Reels</h3><p class="text-sm text-gray-600 leading-relaxed mb-4">Graphics and reels created to promote a salon suite rental business, helping beauty professionals discover and book their space.</p><div class="flex flex-wrap gap-2"><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">Canva</span><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">CapCut</span><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">Meta Business Suite</span></div></div>
+<div class="relative flex justify-center py-8"><div class="phone tilt w-48 sm:w-56 z-10"><img src="images/featured-main.png" data-ph="540x1100|Featured post" alt="Featured post" class=""></div>
+<div class="absolute left-0 sm:left-6 top-4 w-24 sm:w-32 rounded-2xl overflow-hidden shadow-xl float -rotate-6"><img src="images/featured-side-1.png" data-ph="400x400|Side post 1" alt="Side post 1" class=""></div>
+<div class="absolute right-0 sm:right-6 bottom-4 w-28 sm:w-36 rounded-2xl overflow-hidden shadow-xl float rotate-6" style="animation-delay:1.5s"><img src="images/featured-side-2.png" data-ph="400x400|Side post 2" alt="Side post 2" class=""></div></div></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="social"><div class="text-center mb-8"><h3 class="font-heading font-bold text-2xl sm:text-3xl">Social Media Posts</h3><p class="text-sm text-gray-500 mt-1">Content for a salon suite rental, one consistent style.</p></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-8 items-start justify-items-center"><div class="flex flex-col items-center gap-4 reveal md:mt-8"><div class="phone tilt w-40 sm:w-48"><img src="images/social-1.png" data-ph="540x1100|Carousel Post" alt="Carousel Post" class=""></div><div class="text-center"><p class="font-heading font-bold">Carousel Post</p><p class="text-xs text-gray-500">Salon Suite Rental</p></div></div><div class="flex flex-col items-center gap-4 reveal md:scale-110"><div class="phone tilt w-40 sm:w-48"><img src="images/social-2.png" data-ph="540x1100|Single Post" alt="Single Post" class=""></div><div class="text-center"><p class="font-heading font-bold">Single Post</p><p class="text-xs text-gray-500">Salon Suite Rental</p></div></div><div class="flex flex-col items-center gap-4 reveal md:mt-8"><div class="phone tilt w-40 sm:w-48"><img src="images/social-3.png" data-ph="540x1100|Reel Cover" alt="Reel Cover" class=""></div><div class="text-center"><p class="font-heading font-bold">Reel Cover</p><p class="text-xs text-gray-500">Salon Suite Rental</p></div></div></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="church"><div class="grid md:grid-cols-5 gap-8 items-center">
+<div class="md:col-span-3 flex justify-center -space-x-4 sm:-space-x-6 py-6 reveal"><div class="poster tilt w-24 sm:w-32 md:w-36 shrink-0 -rotate-6 translate-y-4"><img src="images/church-poster-1.png" data-ph="600x800|Poster 1" alt="Poster 1" class=""></div><div class="poster tilt w-24 sm:w-32 md:w-36 shrink-0 -rotate-2 translate-y-0"><img src="images/church-poster-2.png" data-ph="600x800|Poster 2" alt="Poster 2" class=""></div><div class="poster tilt w-24 sm:w-32 md:w-36 shrink-0 rotate-0 translate-y-6"><img src="images/church-poster-3.png" data-ph="600x800|Poster 3" alt="Poster 3" class=""></div><div class="poster tilt w-24 sm:w-32 md:w-36 shrink-0 rotate-3 translate-y-1"><img src="images/church-poster-4.png" data-ph="600x800|Poster 4" alt="Poster 4" class=""></div><div class="poster tilt w-24 sm:w-32 md:w-36 shrink-0 rotate-6 translate-y-5"><img src="images/church-poster-5.png" data-ph="600x800|Poster 5" alt="Poster 5" class=""></div></div>
+<div class="md:col-span-2 space-y-6"><div class="reveal"><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full">Church Media</span><h3 class="font-heading font-bold text-2xl sm:text-3xl mt-3 mb-2">Sunday Posters, Announcements & Events</h3><p class="text-sm text-gray-600 leading-relaxed mb-4">Weekly service posters, announcements and event graphics made on a steady deadline, plus landscape formats for screens and videos.</p><div class="flex flex-wrap gap-2"><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">Canva</span><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">CapCut</span></div></div>
+<div class="tv reveal"><img src="images/church-landscape.png" data-ph="1280x720|Landscape event graphic" alt="Landscape event graphic" class=""></div></div></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="email"><div class="grid md:grid-cols-2 gap-8 items-center">
+<div class="relative px-4 py-8 reveal"><div class="absolute inset-x-8 -top-1 opacity-60 -rotate-3 scale-95"><div class="laptop-screen"><img src="images/email-back.png" data-ph="1000x625|Email 2" alt="Email 2" class=""></div><div class="laptop-base"></div></div><div class="relative"><div class="laptop-screen"><img src="images/email-main.png" data-ph="1000x625|Email 1" alt="Email 1" class=""></div><div class="laptop-base"></div></div></div>
+<div class="reveal"><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full">Email Marketing</span><h3 class="font-heading font-bold text-2xl sm:text-3xl mt-3 mb-2">Email Campaigns & Newsletters</h3><p class="text-sm text-gray-600 leading-relaxed mb-4">Campaign emails designed and organized in Mailchimp, from layout to subscriber lists and automations.</p><div class="flex flex-wrap gap-2"><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">Mailchimp</span></div></div></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="branding"><div class="text-center mb-8"><h3 class="font-heading font-bold text-2xl sm:text-3xl">Logo & Branding</h3><p class="text-sm text-gray-500 mt-1">Logo design for a perfume brand.</p></div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+<div class="col-span-2 row-span-2 rounded-3xl p-8 flex items-center justify-center min-h-[240px]" style="background:linear-gradient(135deg,#f4f0ea,#d9d0c4)"><img src="images/logo-main.png" data-ph="600x600|Perfume Logo" alt="Perfume Logo" class="max-h-56 object-contain"></div>
+<div class="bg-[#f8f7fc] rounded-3xl p-5 flex flex-col justify-between aspect-square"><span class="text-[10px] font-semibold uppercase text-gray-500">Palette</span><div class="flex gap-2"><i class="w-8 h-8 rounded-full bg-white border border-gray-200"></i><i class="w-8 h-8 rounded-full" style="background:#d9d0c4"></i><i class="w-8 h-8 rounded-full" style="background:#b9bdc4"></i><i class="w-8 h-8 rounded-full" style="background:#1a1a1a"></i></div></div>
+<div class="rounded-3xl p-5 flex flex-col justify-between aspect-square" style="background:#1a1a1a;color:#f4f0ea"><span class="text-[10px] font-semibold uppercase opacity-50">Fonts</span><span class="font-serif text-5xl tracking-widest">Aa</span></div>
+<div class="rounded-3xl overflow-hidden aspect-square"><img src="images/logo-mockup-1.png" data-ph="600x600|Perfume Bottle Mockup" alt="Perfume bottle mockup" class="w-full h-full object-cover"></div>
+<div class="rounded-3xl overflow-hidden aspect-square"><img src="images/logo-mockup-2.png" data-ph="600x600|Packaging Mockup" alt="Packaging mockup" class="w-full h-full object-cover"></div></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="video"><div class="grid md:grid-cols-2 gap-8 items-center">
+<div class="reveal"><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full">Video Editing</span><h3 class="font-heading font-bold text-2xl sm:text-3xl mt-3 mb-2">Reels & Long-Form Videos</h3><p class="text-sm text-gray-600 leading-relaxed mb-4">Short-form reels and longer videos edited in CapCut. Tap the phone to play, or pick another video.</p><div class="flex flex-wrap gap-2"><span class="text-[11px] font-semibold border border-gray-300 text-gray-600 rounded-full px-3 py-1">CapCut</span></div></div>
+<div class="flex items-center justify-center gap-5 reveal"><div class="relative"><div id="video-phone" class="phone tilt w-44 sm:w-52 cursor-pointer"><video id="main-video" src="images/video-1.mp4" poster="images/video-1.png" playsinline preload="metadata" loop></video></div><div id="video-msg" class="absolute inset-x-3 bottom-6 hidden text-center text-[11px] font-semibold bg-white/95 text-brandDark rounded-xl p-2 z-10 pointer-events-none"></div><div id="play-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300"><span class="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg"><i class="fa-solid fa-play text-brandOrange ml-1"></i></span></div></div><div class="flex flex-col gap-3"><button class="vthumb active rounded-2xl overflow-hidden w-24 sm:w-28 aspect-[9/16] border-2 border-transparent hover:border-brandOrange transition" data-video="images/video-1.mp4"><img src="images/video-1.png" data-ph="360x640|Video 1" alt="Video 1" class="w-full h-full object-cover"></button><button class="vthumb rounded-2xl overflow-hidden w-24 sm:w-28 aspect-[9/16] border-2 border-transparent hover:border-brandOrange transition" data-video="images/video-2.mp4"><img src="images/video-2.png" data-ph="360x640|Video 2" alt="Video 2" class="w-full h-full object-cover"></button><button class="vthumb rounded-2xl overflow-hidden w-24 sm:w-28 aspect-[9/16] border-2 border-transparent hover:border-brandOrange transition" data-video="images/video-3.mp4"><img src="images/video-3.png" data-ph="360x640|Video 3" alt="Video 3" class="w-full h-full object-cover"></button></div></div></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="passion"><div class="text-center mb-8"><h3 class="font-heading font-bold text-2xl sm:text-3xl">Passion Projects</h3><p class="text-sm text-gray-500 mt-1">Concept brands across different niches.</p></div><div class="grid md:grid-cols-2 gap-6"><article class="md:col-span-2 bg-[#f8f7fc] rounded-3xl p-4 sm:p-5 grid md:grid-cols-2 gap-5 items-center reveal"><div class="rounded-2xl overflow-hidden aspect-square bg-[#f2effa]"><img src="images/passion-1.png" data-ph="800x800|Dental Clinic" alt="Dental Clinic" class="w-full h-full object-cover"></div><div class="md:p-4"><h4 class="font-heading font-bold text-base sm:text-lg tracking-wide">DENTAL CLINIC</h4><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full mt-2 mb-3">Social Media Concept · Healthcare</span><p class="text-sm text-gray-600 leading-relaxed">A fresh and approachable social media concept for a modern dental clinic, combining educational content, everyday dental care, and lifestyle-focused visuals to make oral health feel simple and relatable.</p></div></article><article class="bg-[#f8f7fc] rounded-3xl p-4 sm:p-5 flex flex-col gap-4 reveal"><div class="rounded-2xl overflow-hidden aspect-square bg-[#f2effa]"><img src="images/passion-2.png" data-ph="800x800|Travel Agency" alt="Travel Agency" class="w-full h-full object-cover"></div><div class="px-1 pb-1"><h4 class="font-heading font-bold text-base sm:text-lg tracking-wide">TRAVEL AGENCY</h4><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full mt-2 mb-3">Social Media Concept · Travel</span><p class="text-sm text-gray-600 leading-relaxed">A visual social media concept for a travel agency focused on destination inspiration, travel guides, practical tips, and experiences that encourage people to discover somewhere new.</p></div></article><article class="bg-[#f8f7fc] rounded-3xl p-4 sm:p-5 flex flex-col gap-4 reveal"><div class="rounded-2xl overflow-hidden aspect-square bg-[#f2effa]"><img src="images/passion-3.png" data-ph="800x800|Czawarma" alt="Czawarma" class="w-full h-full object-cover"></div><div class="px-1 pb-1"><h4 class="font-heading font-bold text-base sm:text-lg tracking-wide">CZAWARMA</h4><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full mt-2 mb-3">Social Media Concept · Food & Beverage</span><p class="text-sm text-gray-600 leading-relaxed">A bold and playful social media concept for a shawarma brand, using crave-worthy food photography, product highlights, interactive content, and personality-driven posts to build appetite and engagement.</p></div></article><article class="bg-[#f8f7fc] rounded-3xl p-4 sm:p-5 flex flex-col gap-4 reveal"><div class="rounded-2xl overflow-hidden aspect-square bg-[#f2effa]"><img src="images/passion-4.png" data-ph="800x800|Pickleball" alt="Pickleball" class="w-full h-full object-cover"></div><div class="px-1 pb-1"><h4 class="font-heading font-bold text-base sm:text-lg tracking-wide">PICKLEBALL</h4><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full mt-2 mb-3">Social Media Concept · Sports & Lifestyle</span><p class="text-sm text-gray-600 leading-relaxed">A fun and energetic social media concept for a pickleball brand focused on introducing the sport, sharing useful tips, promoting sessions, and building a welcoming community around the game.</p></div></article><article class="bg-[#f8f7fc] rounded-3xl p-4 sm:p-5 flex flex-col gap-4 reveal"><div class="rounded-2xl overflow-hidden aspect-square bg-[#f2effa]"><img src="images/passion-5.png" data-ph="800x800|Beauty" alt="Beauty" class="w-full h-full object-cover"></div><div class="px-1 pb-1"><h4 class="font-heading font-bold text-base sm:text-lg tracking-wide">BEAUTY</h4><span class="inline-block text-[10px] font-semibold uppercase tracking-wider bg-brandPurple/40 px-3 py-1 rounded-full mt-2 mb-3">Social Media Concept · Beauty & Skincare</span><p class="text-sm text-gray-600 leading-relaxed">A soft and modern beauty concept inspired by effortless skincare and makeup, combining product-focused visuals, simple routines, beauty tips, and lifestyle content to create a clean and relatable brand presence.</p></div></article></div>
+<div class="mt-6 flex items-start gap-3 bg-[#f8f7fc] border border-gray-200 rounded-2xl p-4 sm:p-5 reveal"><i class="fa-solid fa-circle-info text-brandOrange mt-0.5"></i><p class="text-xs sm:text-sm text-gray-600 leading-relaxed"><b class="text-brandDark">Note:</b> These are personal concept projects. The photos used are stock images from the internet, and I am not an employee or affiliate of any brand shown. All graphics, designs, ideas, and layouts were created by me from scratch.</p></div></div>
+            <div class="pblock mb-10 sm:mb-16" data-cat="admin"><div class="text-center mb-8"><h3 class="font-heading font-bold text-2xl sm:text-3xl">Admin Support Samples</h3><p class="text-sm text-gray-500 mt-1">Sample work showing how I keep things organized.</p></div>
+<div class="grid md:grid-cols-2 gap-6"><div class="bg-[#f8f7fc] p-5 rounded-3xl reveal"><div class="mb-5"><div class="laptop-screen"><img src="images/admin-calendar.png" data-ph="1000x625|Content Calendar (Google Sheets)" alt="Content Calendar (Google Sheets)" class=""></div><div class="laptop-base"></div></div><h4 class="font-heading font-bold text-lg">Content Calendar (Google Sheets)</h4><p class="text-xs text-gray-500 mt-1">Sample calendar for planning and tracking posts.</p></div><div class="bg-[#f8f7fc] p-5 rounded-3xl reveal"><div class="mb-5"><div class="laptop-screen"><img src="images/admin-manual.png" data-ph="1000x625|User Manual (Documentation)" alt="User Manual (Documentation)" class=""></div><div class="laptop-base"></div></div><h4 class="font-heading font-bold text-lg">User Manual (Documentation)</h4><p class="text-xs text-gray-500 mt-1">User manual for a café's online ordering website, covering how customers browse, order, pay and track orders. Written step by step with tables and troubleshooting tips.</p></div></div>
+</div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="fixed inset-0 z-[60] bg-black/80 hidden items-center justify-center p-6 cursor-zoom-out"><img src="" alt="" class="max-h-full max-w-full rounded-2xl"></div>
+
+    <!-- CONTACT / FOOTER SECTION -->
+    <section id="contact" class="bg-white px-3 sm:px-6 pb-3 sm:pb-6 pt-2">
+        <div class="max-w-6xl mx-auto rounded-[2rem] md:rounded-[3rem] text-white px-6 sm:px-12 py-12 sm:py-16" style="background:linear-gradient(180deg,#ff5732 0%,#d1b8fb 100%)">
+            <div class="grid md:grid-cols-12 gap-10 md:gap-8">
+                <div class="md:col-span-6">
+                    <h2 class="text-4xl sm:text-6xl font-heading font-bold leading-tight mb-6">Let's Work<br>Together</h2>
+                    <a href="mailto:czarinagerong1@gmail.com" class="inline-flex items-center gap-2 bg-white text-brandDark font-semibold text-sm px-8 py-4 rounded-full hover:shadow-xl transition-all active:scale-95">
+                        <i class="fa-solid fa-envelope"></i><span>Send Email</span>
+                    </a>
+                </div>
+
+                <div class="md:col-span-3">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-white/70 mb-4">Menu</p>
+                    <ul class="space-y-3 text-sm font-semibold">
+                        <li><a href="#home" class="hover:underline underline-offset-4">Home</a></li>
+                        <li><a href="#about" class="hover:underline underline-offset-4">About</a></li>
+                        <li><a href="#services" class="hover:underline underline-offset-4">Services</a></li>
+                        <li><a href="#portfolio" class="hover:underline underline-offset-4">Portfolio</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-3">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-white/70 mb-4">Details</p>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fa-solid fa-location-dot mr-2"></i>Philippines</li>
+                        <li><a href="https://wa.me/639758462868" target="_blank" rel="noopener noreferrer" class="hover:underline"><i class="fa-brands fa-whatsapp mr-2"></i>0975 8462868</a></li>
+                        <li><a href="mailto:czarinagerong1@gmail.com" class="hover:underline break-all"><i class="fa-solid fa-envelope mr-2"></i>czarinagerong1@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 1. Text Roulette (auto-counts roles)
+        const rouletteList = document.getElementById('roulette-list');
+        const totalRoles = rouletteList.children.length;
+        let activeIndex = 0;
+
+        setInterval(() => {
+            activeIndex = (activeIndex + 1) % totalRoles;
+            rouletteList.style.transform = `translateY(-${activeIndex * 1.2}em)`;
+        }, 2200);
+
+        // Services accordion
+        document.querySelectorAll('.service-item').forEach(item => {
+            item.querySelector('.service-head').addEventListener('click', () => {
+                const willOpen = !item.classList.contains('open');
+                document.querySelectorAll('.service-item.open').forEach(o => {
+                    o.classList.remove('open');
+                    o.querySelector('.service-head').setAttribute('aria-expanded', 'false');
+                });
+                if (willOpen) {
+                    item.classList.add('open');
+                    item.querySelector('.service-head').setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        // 2. Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 25) {
+                navbar.classList.add('glass-nav');
+                navbar.classList.remove('py-4', 'sm:py-5');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('glass-nav');
+                navbar.classList.remove('py-3');
+                navbar.classList.add('py-4', 'sm:py-5');
+            }
+        });
+
+        // 3. Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        let isOpen = false;
+
+        function toggleMobileMenu() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+                mobileMenu.classList.add('opacity-100', 'pointer-events-auto');
+                document.body.style.overflow = 'hidden';
+            } else {
+                mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('opacity-100', 'pointer-events-auto');
+                document.body.style.overflow = '';
+            }
+        }
+        menuBtn.addEventListener('click', toggleMobileMenu);
+        mobileNavLinks.forEach(link => link.addEventListener('click', () => { if (isOpen) toggleMobileMenu(); }));
+    </script>
+
+    <script>
+        // Placeholder fallback: shows a placeholder until you add the real file in /images
+        document.querySelectorAll('img[data-ph]').forEach(img => {
+            img.addEventListener('error', () => {
+                const [size, label] = img.dataset.ph.split('|');
+                img.onerror = null;
+                img.src = `https://placehold.co/${size}/f2effa/121216?text=${encodeURIComponent(label)}`;
+            });
+            if (img.complete && img.naturalWidth === 0) img.dispatchEvent(new Event('error'));
+        });
+
+        // Portfolio filter tabs
+        document.querySelectorAll('.ptab').forEach(tab => tab.addEventListener('click', () => {
+            document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const f = tab.dataset.filter;
+            document.querySelectorAll('.pblock').forEach(b => {
+                b.classList.toggle('hidden', f !== 'all' && b.dataset.cat !== f);
+            });
+        }));
+
+        // Scroll reveal
+        const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+        // Video player (tap the phone to play / pause)
+        const mv = document.getElementById('main-video'), vphone = document.getElementById('video-phone'), vplay = document.getElementById('play-overlay');
+        const thumbs = document.querySelectorAll('.vthumb');
+        const PH_POSTER = 'https://placehold.co/540x1100/f2effa/121216?text=Video';
+        function setPoster(src) { const t = new Image(); t.onload = () => mv.poster = src; t.onerror = () => mv.poster = PH_POSTER; t.src = src; }
+        setPoster('images/video-1.png');
+        vphone.addEventListener('click', () => { if (mv.paused) { mv.play().catch(() => {}); } else { mv.pause(); } });
+        mv.addEventListener('play', () => vplay.style.opacity = 0);
+        mv.addEventListener('pause', () => vplay.style.opacity = 1);
+        mv.addEventListener('ended', () => vplay.style.opacity = 1);
+        const vmsg = document.getElementById('video-msg');
+        mv.addEventListener('error', () => {
+            vmsg.textContent = 'Can\'t play "' + mv.getAttribute('src') + '". File not found or not an MP4 (H.264).';
+            vmsg.classList.remove('hidden');
+        });
+        mv.addEventListener('loadeddata', () => vmsg.classList.add('hidden'));
+        thumbs.forEach(t => t.addEventListener('click', e => {
+            e.stopPropagation();
+            mv.pause();
+            mv.src = t.dataset.video;
+            mv.poster = t.querySelector('img').src;
+            mv.load();
+            thumbs.forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            mv.play().catch(() => {});
+        }));
+
+        // Lightbox
+        const lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+        document.querySelectorAll('.pblock img').forEach(img => img.addEventListener('click', () => {
+            if (img.closest('.vthumb')) return;
+            lbImg.src = img.currentSrc || img.src; lb.classList.remove('hidden'); lb.classList.add('flex');
+        }));
+        lb.addEventListener('click', () => { lb.classList.add('hidden'); lb.classList.remove('flex'); });
+    </script>
+</body>
+</html>
